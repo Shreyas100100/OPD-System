@@ -1,0 +1,91 @@
+.scheduled-appointments-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.TableContainer {
+  margin-top: 20px;
+}
+
+.Table {
+  width: 00%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.TableHead,
+.TableBody,
+.TableRow {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.TableHead {
+  background-color: #f8f8f8;
+}
+
+.TableCell {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.TableCell:last-child {
+  text-align: center;
+}
+
+.Button {
+  margin-right: 8px;
+}
+
+.CircularProgress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Edit Dialog Styles */
+.Dialog {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+.DialogTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.DialogContent {
+  margin-bottom: 16px;
+  padding: auto;
+}
+
+.TextField {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 16;
+  }
+}
+
+.DialogActions {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+
+  .Button {
+    margin-left: 8px;
+  }
+}

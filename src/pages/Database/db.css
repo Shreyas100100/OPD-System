@@ -1,0 +1,90 @@
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.styled-table {
+  margin-top: 20px;
+  margin-left: 275px;
+  margin-right: auto;
+}
+
+.styled-table table {
+  width: 70%; /* Adjust the width as needed */
+  border-spacing: 0;
+  border-collapse: collapse;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.styled-table .TableHead,
+.styled-table .TableBody,
+.styled-table .TableRow {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.styled-table .TableHead {
+  background-color: #f8f8f8;
+}
+
+.styled-table .TableCell {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.styled-table .TableCell:last-child {
+  text-align: center;
+}
+
+.styled-table .Button {
+  margin-right: 8px;
+}
+
+.styled-table .CircularProgress {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+/* Edit Dialog Styles */
+.styled-table .Dialog {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+}
+
+.styled-table .DialogTitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.styled-table .DialogContent {
+  margin-bottom: 16px;
+  padding: auto;
+}
+
+.styled-table .TextField {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 16px;
+  }
+}
+
+.styled-table .DialogActions {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+
+  .Button {
+    margin-left: 8px;
+  }
+}
