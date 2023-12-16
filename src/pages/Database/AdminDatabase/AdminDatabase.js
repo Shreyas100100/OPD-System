@@ -133,8 +133,9 @@ const AdminDatabase = () => {
         <CircularProgress />
       ) : (
         <TableContainer component={Paper} className="styled-table">
+          <h2><TableHead >Admin Database</TableHead></h2>
           <Table>
-            <TableHead>
+            
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Surname</TableCell>
@@ -144,7 +145,7 @@ const AdminDatabase = () => {
                 <TableCell>Edit</TableCell>
                 <TableCell>Delete</TableCell>
               </TableRow>
-            </TableHead>
+            {/* </TableHead> */}
             <TableBody>
               {userData.map((user) => (
                 <TableRow key={user.id}>

@@ -1,13 +1,19 @@
-// Import necessary libraries
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import { collection, addDoc, getDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDoc,
+  doc,
+  getDocs,
+} from "firebase/firestore";
 import "./BookAppointment.css";
 import NvBar from "../../components/Navbar/Navbar";
 import { getAuth } from "firebase/auth";
 import { useUserAuth } from "../../context/UserAuthContext";
-import { Button, Card, Row, Col } from "react-bootstrap";
-import Disp from "../Database/Disp";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
 import { Link, useNavigate } from "react-router-dom";
 
 const BookAppointment = () => {
@@ -32,6 +38,7 @@ const BookAppointment = () => {
     uid: "",
   });
 
+  const [doctorList, setDoctorList] = useState([]);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,7 +66,20 @@ const BookAppointment = () => {
       }
     };
 
+    const fetchDoctors = async () => {
+      try {
+        const doctorsCollection = collection(db, "doctors");
+        const doctorsSnapshot = await getDocs(doctorsCollection);
+
+        const doctorsData = doctorsSnapshot.docs.map((doc) => doc.data().name);
+        setDoctorList(doctorsData);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
+    };
+
     fetchUserDetails();
+    fetchDoctors();
   }, [user.uid]);
 
   const getCurrentDateTime = () => {
@@ -140,29 +160,45 @@ const BookAppointment = () => {
       <form onSubmit={handleSubmit} className="appointment-form">
         <div className="form-group">
           <label htmlFor="specialistDoctor">Specialist Doctor:</label>
-          <input
-            type="text"
+          <TextField
+            select
             name="specialistDoctor"
             value={formData.specialistDoctor}
             onChange={handleChange}
+            variant="outlined"
+            fullWidth
             required
-          />
+          >
+            <MenuItem value="" disabled>
+              Select Specialist Doctor
+            </MenuItem>
+            {doctorList.map((doctor) => (
+              <MenuItem key={doctor} value={doctor}>
+                {doctor}
+              </MenuItem>
+            ))}
+          </TextField>
         </div>
         <div className="form-group">
           <label htmlFor="bloodGroup">Blood Group:</label>
-          <select
+          <TextField
+            select
             name="bloodGroup"
             value={formData.bloodGroup}
             onChange={handleChange}
+            variant="outlined"
+            fullWidth
             required
           >
-            <option value="">Select Blood Group</option>
+            <MenuItem value="" disabled>
+              Select Blood Group
+            </MenuItem>
             {bloodGroups.map((group) => (
-              <option key={group} value={group}>
+              <MenuItem key={group} value={group}>
                 {group}
-              </option>
+              </MenuItem>
             ))}
-          </select>
+          </TextField>
         </div>
         <div className="form-group">
           <label htmlFor="patientName">Patient's Name:</label>
@@ -195,14 +231,17 @@ const BookAppointment = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="appointmentDateTime">
-            Appointment Date and Time:
-          </label>
-          <input
-            type="datetime-local"
+          <label htmlFor="appointmentDateTime">Choose Appointment Date</label>
+          <TextField
+            type="date"
             name="appointmentDateTime"
             value={formData.appointmentDateTime}
             onChange={handleChange}
+            variant="outlined"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             required
           />
           {formError && <div className="error-message">{formError}</div>}

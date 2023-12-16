@@ -112,9 +112,7 @@ const DoctorDatabase = () => {
       });
 
       setUserData((prevUserData) =>
-        prevUserData.map((user) =>
-          user.id === editUser.id ? editUser : user
-        )
+        prevUserData.map((user) => (user.id === editUser.id ? editUser : user))
       );
 
       setOpenEditDialog(false);
@@ -133,26 +131,28 @@ const DoctorDatabase = () => {
         <CircularProgress />
       ) : (
         <TableContainer component={Paper} className="styled-table">
+          <h2>
+            <TableHead>Doctor Database</TableHead>
+          </h2>
+
           <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Surname</TableCell>
-                <TableCell>DOB</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
-            </TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Surname</TableCell>
+              {/* <TableCell>DOB</TableCell> */}
+              <TableCell>Email</TableCell>
+              {/* <TableCell>Role</TableCell> */}
+              <TableCell>Edit</TableCell>
+              <TableCell>Delete</TableCell>
+            </TableRow>
             <TableBody>
               {userData.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.surname}</TableCell>
-                  <TableCell>{formatDate(user.dob)}</TableCell>
+                  {/* <TableCell>{formatDate(user.dob)}</TableCell> */}
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
+                  {/* <TableCell>{user.role}</TableCell> */}
                   <TableCell>
                     <Button
                       variant="contained"
@@ -250,9 +250,8 @@ const DoctorDatabase = () => {
         <DialogContent>
           <p>
             Are you sure you want to delete{" "}
-            {`${deleteConfirmation?.name} ${
-              deleteConfirmation?.surname
-            } (${deleteConfirmation?.role})`}?
+            {`${deleteConfirmation?.name} ${deleteConfirmation?.surname} (${deleteConfirmation?.role})`}
+            ?
           </p>
         </DialogContent>
         <DialogActions>

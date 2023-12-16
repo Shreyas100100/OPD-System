@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import { useUserAuth } from "../../context/UserAuthContext";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
 import "./login.css"; // Import the CSS file
@@ -16,7 +15,6 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { logIn } = useUserAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,8 +25,10 @@ const Login = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
 
       // Get the user's role from Firestore
-      const userSnapshot = await getDocs(query(collection(firestore, 'users'), where('email', '==', userCredential.user.email)));
-      
+      const userSnapshot = await getDocs(
+        query(collection(firestore, "users"), where("email", "==", userCredential.user.email))
+      );
+
       if (userSnapshot.size === 1) {
         const userData = userSnapshot.docs[0].data();
         const userRole = userData.role;
@@ -38,7 +38,8 @@ const Login = () => {
         }
         if (userRole === "Doctor") {
           navigate("/doctorHome");
-        } if(userRole==="Patient") {
+        }
+        if (userRole === "Patient") {
           navigate("/home");
         }
       } else {
@@ -52,6 +53,8 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
+        <h2 className="mb-4">OPD System </h2>
+
         <h2 className="mb-4">Login</h2>
 
         {error && <Alert variant="danger">{error}</Alert>}
@@ -65,7 +68,7 @@ const Login = () => {
             />
           </Form.Group>
 
-          <Form.Group className="mb-32" controlId="formBasicPassword">
+          <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Control
               type="password"
               placeholder="Password"

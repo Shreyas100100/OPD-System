@@ -60,7 +60,7 @@ const Home = () => {
             <Card.Body>
               <Disp />
               <h2>Welcome, {user && user.email}</h2>
-              <p className="uid-section">UID: {user && user.uid}</p>
+              {/* <p className="uid-section">UID: {user && user.uid}</p> */}
               <div className="button-section">
                 <Button variant="primary" onClick={handleLogout}>
                   Log out
@@ -75,17 +75,7 @@ const Home = () => {
           </Card>
         </Col>
 
-        {/* <Col md={8}>
-          <Card>
-            <Card.Body>
-              <Card.Body className="link-section">
-                <Link to="/DbPg" onClick={handleDbPgRedirect} className="btn btn-primary">
-                  Database Page
-                </Link>
-              </Card.Body>
-            </Card.Body>
-          </Card>
-        </Col> */}
+        
       </Row>
     </div>
   );

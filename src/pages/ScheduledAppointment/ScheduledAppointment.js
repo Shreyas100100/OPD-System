@@ -28,6 +28,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  MenuItem, // Import MenuItem
 } from "@mui/material";
 import "./ScheduledAppointment.css";
 
@@ -37,6 +38,10 @@ const ScheduledAppointments = () => {
   const { user } = useUserAuth();
   const [editAppointment, setEditAppointment] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [doctorList, setDoctorList] = useState([]);
+  const [bloodGroups, setBloodGroups] = useState([
+    "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"
+  ]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -62,7 +67,20 @@ const ScheduledAppointments = () => {
       }
     };
 
+    const fetchDoctors = async () => {
+      try {
+        const doctorsCollection = collection(db, "doctors");
+        const doctorsSnapshot = await getDocs(doctorsCollection);
+
+        const doctorsData = doctorsSnapshot.docs.map((doc) => doc.data());
+        setDoctorList(doctorsData);
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      }
+    };
+
     fetchAppointments();
+    fetchDoctors();
   }, [user.uid]);
 
   const handleEdit = (appointment) => {
@@ -127,8 +145,7 @@ const ScheduledAppointments = () => {
     <div className="scheduled-appointments-container">
       <NvBar toggleNavbar={toggleNavbar} />
       <div className="scheduled-appointments-content">
-        <h2 
-        >Scheduled Appointments</h2>
+        <h2>Scheduled Appointments</h2>
         {loading ? (
           <CircularProgress />
         ) : (
@@ -139,7 +156,7 @@ const ScheduledAppointments = () => {
                   <TableCell>Specialist Doctor</TableCell>
                   <TableCell>Blood Group</TableCell>
                   <TableCell>Patient's Name</TableCell>
-                  <TableCell>Appointment Date and Time</TableCell>
+                  <TableCell>Appointment Date </TableCell>
                   <TableCell></TableCell>
                   <TableCell></TableCell>
                 </TableRow>
@@ -181,6 +198,7 @@ const ScheduledAppointments = () => {
           <DialogContent>
             <TextField
               label="Specialist Doctor"
+              select
               fullWidth
               style={{ marginTop: '12px' }}
               value={editAppointment?.specialistDoctor || ""}
@@ -190,9 +208,19 @@ const ScheduledAppointments = () => {
                   specialistDoctor: e.target.value,
                 })
               }
-            />
+            >
+              <MenuItem value="" disabled>
+                Select Specialist Doctor
+              </MenuItem>
+              {doctorList.map((doctor) => (
+                <MenuItem key={doctor.id} value={`${doctor.name} ${doctor.surname}`}>
+                  {`${doctor.name} ${doctor.surname}`}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               label="Blood Group"
+              select
               fullWidth
               style={{ marginTop: '12px' }}
               value={editAppointment?.bloodGroup || ""}
@@ -202,7 +230,16 @@ const ScheduledAppointments = () => {
                   bloodGroup: e.target.value,
                 })
               }
-            />
+            >
+              <MenuItem value="" disabled>
+                Select Blood Group
+              </MenuItem>
+              {bloodGroups.map((group) => (
+                <MenuItem key={group} value={group}>
+                  {group}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               label="Patient's Name"
               fullWidth
@@ -216,8 +253,8 @@ const ScheduledAppointments = () => {
               }
             />
             <TextField
-              label="Appointment Date and Time"
-              type="datetime-local"
+              label="Appointment Date"
+              type="date"
               fullWidth
               style={{ marginTop: '12px' }}
               value={editAppointment?.appointmentDateTime || ""}
