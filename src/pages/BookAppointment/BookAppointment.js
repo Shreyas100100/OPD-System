@@ -169,7 +169,7 @@ const BookAppointment = () => {
               Select Specialist Doctor
             </MenuItem>
             {doctorList.map((doctor) => (
-              <MenuItem key={doctor.id} value={`${doctor.name} ${doctor.surname}`}>
+              <MenuItem key={doctor.id} value={doctor.name}>
                 {`${doctor.name} ${doctor.surname}`}
               </MenuItem>
             ))}

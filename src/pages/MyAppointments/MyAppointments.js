@@ -3,7 +3,6 @@ import {
   collection,
   getDocs,
   query,
-  where,
   deleteDoc,
   doc as firestoreDoc,
   updateDoc,
@@ -19,15 +18,17 @@ import {
   Button,
   CircularProgress,
   TextField,
+  MenuItem,
+  Grid,
+  Pagination,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem,
 } from "@mui/material";
-import DoctorNavbar from "../../components/DoctorNavbar/DoctorNavbar";
-import { useUserAuth } from "../../context/UserAuthContext";
 import { db } from "../../firebase";
+import { useUserAuth } from "../../context/UserAuthContext";
+import DoctorNavbar from "../../components/DoctorNavbar/DoctorNavbar";
 
 const MyAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -35,19 +36,21 @@ const MyAppointments = () => {
   const { user } = useUserAuth();
   const [editAppointment, setEditAppointment] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [doctorList, setDoctorList] = useState([]);
-  const [bloodGroups, setBloodGroups] = useState([
-    "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"
-  ]);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState("");
+  const [selectedDoctor, setSelectedDoctor] = useState("");
+  const [doctors, setDoctors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const appointmentsCollection = collection(db, "appointments");
-        const appointmentsQuery = query(
-          appointmentsCollection,
-          where("specialistDoctorId", "==", user.uid)
-        );
+        const appointmentsQuery = query(appointmentsCollection);
 
         const appointmentsSnapshot = await getDocs(appointmentsQuery);
 
@@ -56,7 +59,13 @@ const MyAppointments = () => {
           appointmentsData.push({ id: doc.id, ...doc.data() });
         });
 
-        setAppointments(appointmentsData);
+        const sortedAppointments = sortAppointments(
+          appointmentsData,
+          sortColumn,
+          sortOrder
+        );
+
+        setAppointments(sortedAppointments);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching appointments:", error);
@@ -69,8 +78,12 @@ const MyAppointments = () => {
         const doctorsCollection = collection(db, "doctors");
         const doctorsSnapshot = await getDocs(doctorsCollection);
 
-        const doctorsData = doctorsSnapshot.docs.map((doc) => doc.data());
-        setDoctorList(doctorsData);
+        const doctorsData = [];
+        doctorsSnapshot.forEach((doc) => {
+          doctorsData.push({ id: doc.id, ...doc.data() });
+        });
+
+        setDoctors(doctorsData);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
@@ -78,31 +91,52 @@ const MyAppointments = () => {
 
     fetchAppointments();
     fetchDoctors();
-  }, [user.uid]);
+  }, [sortColumn, sortOrder]);
+
+  const filteredAppointments = appointments
+    .filter((appointment) =>
+      appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAppointments = filteredAppointments.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleEdit = (appointment) => {
     setEditAppointment(appointment);
     setOpenEditDialog(true);
+    setSelectedBloodGroup(appointment.bloodGroup);
+    setSelectedDoctor(appointment.specialistDoctor);
   };
 
   const handleEditClose = () => {
     setOpenEditDialog(false);
     setEditAppointment(null);
+    setSelectedBloodGroup("");
+    setSelectedDoctor("");
   };
 
   const handleSaveEdit = async () => {
     try {
-      const appointmentRef = firestoreDoc(db, "appointments", editAppointment.id);
+      const appointmentRef = firestoreDoc(
+        db,
+        "appointments",
+        editAppointment.id
+      );
 
       await updateDoc(appointmentRef, {
-        specialistDoctor: editAppointment.specialistDoctor,
-        bloodGroup: editAppointment.bloodGroup,
+        specialistDoctor: selectedDoctor || editAppointment.specialistDoctor,
+        bloodGroup: selectedBloodGroup || editAppointment.bloodGroup,
         patientName: editAppointment.patientName,
         appointmentDateTime: editAppointment.appointmentDateTime,
         // Add other fields as needed
       });
 
-      // Update the local state
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
           appointment.id === editAppointment.id ? editAppointment : appointment
@@ -111,8 +145,6 @@ const MyAppointments = () => {
 
       setOpenEditDialog(false);
       setEditAppointment(null);
-
-      console.log(`Appointment with ID ${editAppointment.id} edited successfully.`);
     } catch (error) {
       console.error("Error editing appointment:", error);
     }
@@ -126,151 +158,240 @@ const MyAppointments = () => {
       setAppointments((prevAppointments) =>
         prevAppointments.filter((appointment) => appointment.id !== id)
       );
-
-      console.log(`Appointment with ID ${id} deleted successfully.`);
     } catch (error) {
       console.error("Error deleting appointment:", error);
     }
   };
 
-  const toggleNavbar = () => {
-    const content = document.querySelector(".scheduled-appointments-content");
-    content.classList.toggle("opened");
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortOrder("asc");
+    }
+  };
+
+  const sortAppointments = (data, column, order) => {
+    if (!column) return data;
+
+    const sortedData = [...data];
+    sortedData.sort((a, b) => {
+      const valueA = a[column];
+      const valueB = b[column];
+
+      if (order === "asc") {
+        return valueA < valueB ? -1 : 1;
+      } else {
+        return valueA > valueB ? -1 : 1;
+      }
+    });
+
+    return sortedData;
+  };
+
+  const renderSortArrow = (column) => {
+    if (sortColumn === column) {
+      return sortOrder === "asc" ? "↑" : "↓";
+    }
+    return null;
+  };
+
+  const handleCancelEdit = () => {
+    setOpenEditDialog(false);
+    setEditAppointment(null);
+    setSelectedBloodGroup("");
+    setSelectedDoctor("");
+  };
+
+  const handleLeaveEdit = () => {
+    setOpenEditDialog(false);
+    setEditAppointment(null);
+    setSelectedBloodGroup("");
+    setSelectedDoctor("");
+  };
+
+  const handleShowDeleteDialog = (appointment) => {
+    setEditAppointment(appointment); // Set the appointment to be deleted
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setSortColumn(null);
+    setSortOrder("asc");
+    setSearchTerm("");
+    setCurrentPage(1);
   };
 
   return (
-    <div className="scheduled-appointments-container">
-      <DoctorNavbar toggleNavbar={toggleNavbar} />
-      <div className="scheduled-appointments-content">
-        <h2>Scheduled Appointments</h2>
+    <div className="appointments-container">
+      <DoctorNavbar />
+      <h1>Welcome {doctors.name}</h1>
+      <div className="appointments-content">
+        <h2>My Appointments</h2>
+        <TextField
+          label="Search Patient"
+          fullWidth
+          margin="normal"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
         {loading ? (
           <CircularProgress />
         ) : (
-          <TableContainer component={Paper} className="TableContainer">
-            <Table className="Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Specialist Doctor</TableCell>
-                  <TableCell>Blood Group</TableCell>
-                  <TableCell>Patient's Name</TableCell>
-                  <TableCell>Appointment Date </TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {appointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
-                    <TableCell>{appointment.specialistDoctor}</TableCell>
-                    <TableCell>{appointment.bloodGroup}</TableCell>
-                    <TableCell>{appointment.patientName}</TableCell>
-                    <TableCell>{appointment.appointmentDateTime}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        onClick={() => handleEdit(appointment)}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleDelete(appointment.id)}
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Pagination
+                count={Math.ceil(filteredAppointments.length / itemsPerPage)}
+                page={currentPage}
+                onChange={(e, page) => paginate(page)}
+                variant="outlined"
+                shape="rounded"
+                size="large"
+              />
+            </Grid>
+          </Grid>
         )}
 
-        {/* Edit Dialog */}
+        <TableContainer component={Paper} className="TableContainer">
+          <Table className="Table">
+            <TableHead>
+              <TableRow>
+                <TableCell onClick={() => handleSort("specialistDoctor")}>
+                  Specialist Doctor {renderSortArrow("specialistDoctor")}
+                </TableCell>
+                <TableCell onClick={() => handleSort("bloodGroup")}>
+                  Blood Group {renderSortArrow("bloodGroup")}
+                </TableCell>
+                <TableCell onClick={() => handleSort("patientName")}>
+                  Patient's Name {renderSortArrow("patientName")}
+                </TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell onClick={() => handleSort("appointmentDateTime")}>
+                  Appointment Date {renderSortArrow("appointmentDateTime")}
+                </TableCell>
+                <TableCell onClick={() => handleSort("bookDateTime")}>
+                  Booking Date {renderSortArrow("bookDateTime")}
+                </TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {currentAppointments.map((appointment) => (
+                <TableRow key={appointment.id}>
+                  <TableCell>{appointment.specialistDoctor}</TableCell>
+                  <TableCell>{appointment.bloodGroup}</TableCell>
+                  <TableCell>{appointment.patientName}</TableCell>
+                  <TableCell>{appointment.email}</TableCell>
+                  <TableCell>
+                    {new Date(appointment.appointmentDateTime)
+                      .toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/,/g, "")}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(appointment.bookDateTime)
+                      .toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/,/g, "")}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleEdit(appointment)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleShowDeleteDialog(appointment)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
         <Dialog open={openEditDialog} onClose={handleEditClose}>
           <DialogTitle>Edit Appointment</DialogTitle>
           <DialogContent>
             <TextField
-              label="Specialist Doctor"
-              select
-              fullWidth
-              style={{ marginTop: '12px' }}
-              value={editAppointment?.specialistDoctor || ""}
-              onChange={(e) =>
-                setEditAppointment({
-                  ...editAppointment,
-                  specialistDoctor: e.target.value,
-                })
-              }
-            >
-              <MenuItem value="" disabled>
-                Select Specialist Doctor
-              </MenuItem>
-              {doctorList.map((doctor) => (
-                <MenuItem key={doctor.id} value={`${doctor.name} ${doctor.surname}`}>
-                  {`${doctor.name} ${doctor.surname}`}
-                </MenuItem>
-              ))}
-            </TextField>
-            <TextField
               label="Blood Group"
               select
               fullWidth
-              style={{ marginTop: '12px' }}
-              value={editAppointment?.bloodGroup || ""}
-              onChange={(e) =>
-                setEditAppointment({
-                  ...editAppointment,
-                  bloodGroup: e.target.value,
-                })
-              }
+              style={{ marginTop: "12px" }}
+              value={selectedBloodGroup}
+              onChange={(e) => setSelectedBloodGroup(e.target.value)}
             >
-              <MenuItem value="" disabled>
-                Select Blood Group
-              </MenuItem>
-              {bloodGroups.map((group) => (
-                <MenuItem key={group} value={group}>
-                  {group}
+              <MenuItem value="0+">0+</MenuItem>
+              <MenuItem value="A+">A+</MenuItem>
+              <MenuItem value="B+">B+</MenuItem>
+              <MenuItem value="AB+">AB+</MenuItem>
+              <MenuItem value="O-">O-</MenuItem>
+              <MenuItem value="A-">A-</MenuItem>
+              <MenuItem value="B-">B-</MenuItem>
+              <MenuItem value="AB-">AB-</MenuItem>
+            </TextField>
+
+            <TextField
+              label="Doctor"
+              select
+              fullWidth
+              style={{ marginTop: "12px" }}
+              value={selectedDoctor}
+              onChange={(e) => setSelectedDoctor(e.target.value)}
+            >
+              {doctors.map((doctor) => (
+                <MenuItem
+                  key={doctor.id}
+                  value={doctor.name + " " + doctor.surname}
+                >
+                  {doctor.name + " " + doctor.surname}
                 </MenuItem>
               ))}
             </TextField>
-            <TextField
-              label="Patient's Name"
-              fullWidth
-              style={{ marginTop: '12px' }}
-              value={editAppointment?.patientName || ""}
-              onChange={(e) =>
-                setEditAppointment({
-                  ...editAppointment,
-                  patientName: e.target.value,
-                })
-              }
-            />
-            <TextField
-              label="Appointment Date"
-              type="datetime-local"
-              fullWidth
-              style={{ marginTop: '12px' }}
-              value={editAppointment?.appointmentDateTime || ""}
-              onChange={(e) =>
-                setEditAppointment({
-                  ...editAppointment,
-                  appointmentDateTime: e.target.value,
-                })
-              }
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            {/* Add other fields as needed */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleEditClose}>Cancel</Button>
-            <Button onClick={handleSaveEdit} variant="contained">
+            <Button variant="contained" onClick={handleSaveEdit}>
               Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+          <DialogContent>
+            <p>Are you sure you want to delete this appointment?</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                handleDelete(editAppointment.id);
+                handleCloseDeleteDialog();
+              }}
+            >
+              Delete
             </Button>
           </DialogActions>
         </Dialog>

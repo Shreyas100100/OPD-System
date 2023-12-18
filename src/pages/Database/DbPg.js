@@ -134,6 +134,7 @@ const DbPg = () => {
         <TableContainer component={Paper} className="styled-table">
           <Table>
             <TableHead>
+              <h1>DATABASE</h1>
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Surname</TableCell>
