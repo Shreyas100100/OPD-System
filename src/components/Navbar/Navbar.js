@@ -145,7 +145,7 @@ export default function NvBar() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              HMS
+              OPD SYSTEM
             </Typography>
           </Box>
           {/* Account Menu */}

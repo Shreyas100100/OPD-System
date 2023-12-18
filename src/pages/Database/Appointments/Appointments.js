@@ -17,14 +17,14 @@ import {
   Paper,
   Button,
   CircularProgress,
-  Checkbox,
-  FormControlLabel,
+  TextField,
+  MenuItem,
+  Grid,
+  Pagination,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  MenuItem,
 } from "@mui/material";
 import "./Appointments.css";
 import { db } from "../../../firebase";
@@ -37,22 +37,15 @@ const Appointments = () => {
   const { user } = useUserAuth();
   const [editAppointment, setEditAppointment] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [selectedDoctors, setSelectedDoctors] = useState([]);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [sortColumn, setSortColumn] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
   const [selectedBloodGroup, setSelectedBloodGroup] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [doctors, setDoctors] = useState([]);
-
-  const toggleFilter = (prevFilters, doctor) => {
-    if (prevFilters.includes(doctor)) {
-      return prevFilters.filter(
-        (selectedDoctor) => selectedDoctor !== doctor
-      );
-    } else {
-      return [...prevFilters, doctor];
-    }
-  };
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Adjust the number of items per page
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -73,14 +66,7 @@ const Appointments = () => {
           sortOrder
         );
 
-        const filteredAppointments = sortedAppointments.filter(
-          (appointment) =>
-            selectedDoctors.length
-              ? selectedDoctors.includes(appointment.specialistDoctor)
-              : true
-        );
-
-        setAppointments(filteredAppointments);
+        setAppointments(sortedAppointments);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching appointments:", error);
@@ -90,7 +76,7 @@ const Appointments = () => {
 
     const fetchDoctors = async () => {
       try {
-        const doctorsCollection = collection(db, "doctors"); // Update to your collection name
+        const doctorsCollection = collection(db, "doctors");
         const doctorsSnapshot = await getDocs(doctorsCollection);
 
         const doctorsData = [];
@@ -106,7 +92,21 @@ const Appointments = () => {
 
     fetchAppointments();
     fetchDoctors();
-  }, [selectedDoctors, sortColumn, sortOrder]);
+  }, [sortColumn, sortOrder]);
+
+  const filteredAppointments = appointments
+    .filter((appointment) =>
+      appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentAppointments = filteredAppointments.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleEdit = (appointment) => {
     setEditAppointment(appointment);
@@ -146,10 +146,6 @@ const Appointments = () => {
 
       setOpenEditDialog(false);
       setEditAppointment(null);
-
-      console.log(
-        `Appointment with ID ${editAppointment.id} edited successfully.`
-      );
     } catch (error) {
       console.error("Error editing appointment:", error);
     }
@@ -163,8 +159,6 @@ const Appointments = () => {
       setAppointments((prevAppointments) =>
         prevAppointments.filter((appointment) => appointment.id !== id)
       );
-
-      console.log(`Appointment with ID ${id} deleted successfully.`);
     } catch (error) {
       console.error("Error deleting appointment:", error);
     }
@@ -204,80 +198,135 @@ const Appointments = () => {
     return null;
   };
 
+  const handleCancelEdit = () => {
+    setOpenEditDialog(false);
+    setEditAppointment(null);
+    setSelectedBloodGroup("");
+    setSelectedDoctor("");
+  };
+
+  const handleLeaveEdit = () => {
+    setOpenEditDialog(false);
+    setEditAppointment(null);
+    setSelectedBloodGroup("");
+    setSelectedDoctor("");
+  };
+
+  const handleShowDeleteDialog = (appointment) => {
+    setEditAppointment(appointment); // Set the appointment to be deleted
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleClearFilters = () => {
+    setSortColumn(null);
+    setSortOrder("asc");
+    setSearchTerm("");
+    setCurrentPage(1);
+  };
+
   return (
     <div className="appointments-container">
       <AdminNavbar />
       <div className="appointments-content">
         <h2>Appointments</h2>
-
-        <div className="sort">
-          {/* Add code for filters, if needed */}
-        </div>
+        <TextField
+          label="Search Patient"
+          fullWidth
+          margin="normal"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
         {loading ? (
           <CircularProgress />
         ) : (
-          <TableContainer component={Paper} className="TableContainer">
-            <Table className="Table">
-              <TableHead>
-                <TableRow>
-                  <TableCell onClick={() => handleSort("specialistDoctor")}>
-                    Specialist Doctor {renderSortArrow("specialistDoctor")}
-                  </TableCell>
-                  <TableCell onClick={() => handleSort("bloodGroup")}>
-                    Blood Group {renderSortArrow("bloodGroup")}
-                  </TableCell>
-                  <TableCell onClick={() => handleSort("patientName")}>
-                    Patient's Name {renderSortArrow("patientName")}
-                  </TableCell>
-                  <TableCell onClick={() => handleSort("appointmentDateTime")}>
-                    Appointment Date and Time{" "}
-                    {renderSortArrow("appointmentDateTime")}
-                  </TableCell>
-                  <TableCell></TableCell>
-                  <TableCell></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {appointments.map((appointment) => (
-                  <TableRow key={appointment.id}>
-                    <TableCell>{appointment.specialistDoctor}</TableCell>
-                    <TableCell>{appointment.bloodGroup}</TableCell>
-                    <TableCell>{appointment.patientName}</TableCell>
-                    <TableCell>
-                      {new Date(appointment.appointmentDateTime).toLocaleDateString(
-                        "en-US",
-                        {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        }
-                      ).replace(/,/g,'')
-                      }
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        onClick={() => handleEdit(appointment)}
-                      >
-                        Edit
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleDelete(appointment.id)}
-                      >
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Pagination
+                count={Math.ceil(filteredAppointments.length / itemsPerPage)}
+                page={currentPage}
+                onChange={(e, page) => paginate(page)}
+                variant="outlined"
+                shape="rounded"
+                size="large"
+              />
+            </Grid>
+          </Grid>
         )}
+
+        <TableContainer component={Paper} className="TableContainer">
+          <Table className="Table">
+            <TableHead>
+              <TableRow>
+                <TableCell onClick={() => handleSort("specialistDoctor")}>
+                  Specialist Doctor {renderSortArrow("specialistDoctor")}
+                </TableCell>
+                <TableCell onClick={() => handleSort("bloodGroup")}>
+                  Blood Group {renderSortArrow("bloodGroup")}
+                </TableCell>
+                <TableCell onClick={() => handleSort("patientName")}>
+                  Patient's Name {renderSortArrow("patientName")}
+                </TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell onClick={() => handleSort("appointmentDateTime")}>
+                  Appointment Date {renderSortArrow("appointmentDateTime")}
+                </TableCell>
+                <TableCell onClick={() => handleSort("bookDateTime")}>Booking Date{renderSortArrow("bookDateTime")}</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {currentAppointments.map((appointment) => (
+                <TableRow key={appointment.id}>
+                  <TableCell>{appointment.specialistDoctor}</TableCell>
+                  <TableCell>{appointment.bloodGroup}</TableCell>
+                  <TableCell>{appointment.patientName}</TableCell>
+                  <TableCell>{appointment.email}</TableCell>
+                  <TableCell>
+                    {new Date(appointment.appointmentDateTime)
+                      .toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/,/g, "")}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(appointment.bookDateTime)
+                      .toLocaleDateString("en-US", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
+                      .replace(/,/g, "")}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      onClick={() => handleEdit(appointment)}
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleShowDeleteDialog(appointment)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
         <Dialog open={openEditDialog} onClose={handleEditClose}>
           <DialogTitle>Edit Appointment</DialogTitle>
@@ -309,18 +358,38 @@ const Appointments = () => {
               onChange={(e) => setSelectedDoctor(e.target.value)}
             >
               {doctors.map((doctor) => (
-                <MenuItem key={doctor.id} value={doctor.name}>
-                  {doctor.name}
+                <MenuItem
+                  key={doctor.id}
+                  value={doctor.name + " " + doctor.surname}
+                >
+                  {doctor.name + " " + doctor.surname}
                 </MenuItem>
               ))}
             </TextField>
-
-            {/* ... (other text fields) */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleEditClose}>Cancel</Button>
             <Button variant="contained" onClick={handleSaveEdit}>
               Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog open={isDeleteDialogOpen} onClose={handleCloseDeleteDialog}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+          <DialogContent>
+            <p>Are you sure you want to delete this appointment?</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => {
+                handleDelete(editAppointment.id);
+                handleCloseDeleteDialog();
+              }}
+            >
+              Delete
             </Button>
           </DialogActions>
         </Dialog>

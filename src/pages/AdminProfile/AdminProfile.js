@@ -1,104 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { Button, Card, Grid, Typography } from "@mui/material";
+import { useUserAuth } from "../../context/UserAuthContext";
+import { getAuth, deleteUser } from "firebase/auth";
+import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  serverTimestamp,
-} from "firebase/firestore";
-import { Container, Box, Typography, Paper } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 import AdminNavbar from "../../components/AdminNavbar/AdminNavbar";
 
+const auth = getAuth();
+
 const AdminProfile = () => {
-  const [appointmentsCount, setAppointmentsCount] = useState(0);
-  const [doctorsCount, setDoctorsCount] = useState(0);
-  const [patientsCount, setPatientsCount] = useState(0);
-  const [liveAppointmentsCount, setLiveAppointmentsCount] = useState(0);
-  const [previousAppointmentsCount, setPreviousAppointmentsCount] = useState(0);
+  const { logOut, user } = useUserAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchAppointmentsCount = async () => {
-      try {
-        const appointmentsCollection = collection(db, "appointments");
-        const appointmentsSnapshot = await getDocs(appointmentsCollection);
-        setAppointmentsCount(appointmentsSnapshot.size);
+  const handleDelete = async () => {
+    try {
+      // Delete the user account
+      await deleteUser(user);
 
-        const currentDate = new Date();
+      // Remove the user from the 'users' collection in the database
+      const userDocRef = doc(db, "users", user.uid);
+      await deleteDoc(userDocRef);
 
-        // Count live appointments
-        const liveAppointmentsSnapshot = appointmentsSnapshot.docs.filter(
-          (doc) => doc.data().appointmentDateTime.toDate() > currentDate
-        );
-        setLiveAppointmentsCount(liveAppointmentsSnapshot.length);
+      // Optionally, you can perform additional actions after successful deletion
+      console.log("User account deleted successfully.");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-        // Count previous appointments
-        const previousAppointmentsSnapshot = appointmentsSnapshot.docs.filter(
-          (doc) => doc.data().appointmentDateTime.toDate() < currentDate
-        );
-        setPreviousAppointmentsCount(previousAppointmentsSnapshot.length);
-      } catch (error) {
-        console.error("Error fetching appointments count:", error);
-      }
-    };
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate("/");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
-    const fetchDoctorsCount = async () => {
-      try {
-        const doctorsCollection = collection(db, "users");
-        const doctorsQuery = query(doctorsCollection, where("role", "==", "Doctor"));
-        const doctorsSnapshot = await getDocs(doctorsQuery);
-        setDoctorsCount(doctorsSnapshot.size);
-      } catch (error) {
-        console.error("Error fetching doctors count:", error);
-      }
-    };
-
-    const fetchPatientsCount = async () => {
-      try {
-        const patientsCollection = collection(db, "users");
-        const patientsQuery = query(patientsCollection, where("role", "==", "Patient"));
-        const patientsSnapshot = await getDocs(patientsQuery);
-        setPatientsCount(patientsSnapshot.size);
-      } catch (error) {
-        console.error("Error fetching patients count:", error);
-      }
-    };
-
-    fetchAppointmentsCount();
-    fetchDoctorsCount();
-    fetchPatientsCount();
-  }, []);
+  const handleDbPgRedirect = () => {
+    if (user && user.role === "3") {
+      navigate("/DbPg");
+    } else {
+      console.log("Access denied. User does not have the required role.");
+      // Optionally show a message or perform another action for users without the required role.
+    }
+  };
 
   return (
-    <Container className="admin-profile-container">
+    <div className="profile-container">
       <AdminNavbar />
-      <Typography variant="h4" align="center" gutterBottom>
-        Admin Profile
-      </Typography>
-      <Box className="admin-profile-boxes">
-        <Paper elevation={3} className="admin-profile-box">
-          <Typography variant="h6" gutterBottom>
-            Appointments Count
-          </Typography>
-          <Typography variant="h4">{appointmentsCount}</Typography>
-          <Typography variant="subtitle2">Live Appointments: {liveAppointmentsCount}</Typography>
-          <Typography variant="subtitle2">Previous Appointments: {previousAppointmentsCount}</Typography>
-        </Paper>
-        <Paper elevation={3} className="admin-profile-box">
-          <Typography variant="h6" gutterBottom>
-            Doctors Count
-          </Typography>
-          <Typography variant="h4">{doctorsCount}</Typography>
-        </Paper>
-        <Paper elevation={3} className="admin-profile-box">
-          <Typography variant="h6" gutterBottom>
-            Patients Count
-          </Typography>
-          <Typography variant="h4">{patientsCount}</Typography>
-        </Paper>
-        {/* Add more boxes as needed */}
-      </Box>
-    </Container>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item md={4}>
+          <Card>
+            <Typography variant="h5" align="center" mt={2}>
+              Welcome, {user && user.email}
+            </Typography>
+            <Typography variant="body1" align="center" mb={2}>
+              UID: {user && user.uid}
+            </Typography>
+            <Typography variant="body2" align="center" mb={2}>
+              Role: {user && user.role}
+            </Typography>
+            <div style={{ textAlign: "center", marginTop: "16px" }}>
+              <Button variant="contained" color="primary" onClick={handleLogout}>
+                Log out
+              </Button>
+            </div>
+            <div style={{ textAlign: "center", marginTop: "8px" }}>
+              <Button variant="contained" color="error" onClick={handleDelete}>
+                Delete Account
+              </Button>
+            </div>
+          </Card>
+        </Grid>
+      </Grid>
+    </div>
   );
 };
 

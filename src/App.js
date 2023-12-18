@@ -15,6 +15,10 @@ import Appointments from "./pages/Database/Appointments/Appointments";
 import AdminDatabase from "./pages/Database/AdminDatabase/AdminDatabase";
 import DoctorDatabase from "./pages/Database/DoctorDatabase/DoctorDatabase";
 import AdminProfile from "./pages/AdminProfile/AdminProfile";
+import DoctorHome from "./pages/DoctorHome/DoctorHome";
+import PatientDb from "./pages/Database/PatientDatabase/PatientDb";
+import MyAppointments from "./pages/MyAppointments/MyAppointments";
+import DoctorProfile from "./pages/Profile/DoctorProfile";
 function App() {
   return (
     <div>
@@ -32,13 +36,20 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/DbPg" element={<DbPg />} />
           <Route path="/Book-Appointment" element={<BookAppointment />} />
-          <Route path="/Scheduled-Appointment" element={<ScheduledAppointments />} />
+          <Route
+            path="/Scheduled-Appointment"
+            element={<ScheduledAppointments />}
+          />
           <Route path="/PatientProfile" element={<PatientProfile />} />
           <Route path="/AdminHome" element={<AdminHome />} />
           <Route path="/Appointments" element={<Appointments />} />
-          <Route path="/AdminDatabase" element={<AdminDatabase />}/>
-          <Route path="/DoctorDatabase" element={<DoctorDatabase />}/>
-          <Route path="/AdminProfile" element={<AdminProfile />}/>
+          <Route path="/AdminDatabase" element={<AdminDatabase />} />
+          <Route path="/DoctorDatabase" element={<DoctorDatabase />} />
+          <Route path="/AdminProfile" element={<AdminProfile />} />
+          <Route path="/DoctorHome" element={<DoctorHome />} />
+          <Route path="/PatientDb" element={<PatientDb />} />
+          <Route path="/MyAppointments" element={<MyAppointments />} />
+          <Route path="/DoctorProfile" element={<DoctorProfile />} />
 
         </Routes>
       </UserAuthContextProvider>

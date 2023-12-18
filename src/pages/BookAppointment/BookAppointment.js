@@ -1,3 +1,5 @@
+// BookAppointment.js
+
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
 import {
@@ -10,11 +12,13 @@ import {
 import "./BookAppointment.css";
 import NvBar from "../../components/Navbar/Navbar";
 import { getAuth } from "firebase/auth";
-import { useUserAuth } from "../../context/UserAuthContext";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
-import { Link, useNavigate } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import { useUserAuth } from "../../context/UserAuthContext";
+import { useNavigate } from "react-router-dom";
 
 const BookAppointment = () => {
   const auth = getAuth();
@@ -39,11 +43,10 @@ const BookAppointment = () => {
   });
 
   const [doctorList, setDoctorList] = useState([]);
-  const [showSnackbar, setShowSnackbar] = useState(false);
-  const [formError, setFormError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [loading, setLoading] = useState(false);
-
-  const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -71,7 +74,15 @@ const BookAppointment = () => {
         const doctorsCollection = collection(db, "doctors");
         const doctorsSnapshot = await getDocs(doctorsCollection);
 
-        const doctorsData = doctorsSnapshot.docs.map((doc) => doc.data().name);
+        const doctorsData = doctorsSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name,
+            surname: data.surname,
+          };
+        });
+
         setDoctorList(doctorsData);
       } catch (error) {
         console.error("Error fetching doctors:", error);
@@ -90,41 +101,14 @@ const BookAppointment = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "appointmentDateTime") {
-      const selectedDateTime = new Date(value);
-      const currentDateTime = new Date();
-
-      if (selectedDateTime < currentDateTime) {
-        setFormError("Please select a future date and time.");
-        return;
-      } else {
-        setFormError("");
-      }
-    }
-
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
-  const isFormValid = () => {
-    return (
-      formData.specialistDoctor &&
-      formData.bloodGroup &&
-      formData.contactNumber &&
-      formData.appointmentDateTime &&
-      !formError
-    );
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!isFormValid()) {
-      setFormError("Please fill in all required fields.");
-      return;
-    }
 
     try {
       const appointmentsCollection = collection(db, "appointments");
@@ -134,14 +118,16 @@ const BookAppointment = () => {
         dateOfBirth: userDetails.dob,
         email: userDetails.email,
         uid: userDetails.uid,
-        bookDateTime: getCurrentDateTime(), // Add the current date and time of booking
+        bookDateTime: getCurrentDateTime(),
       });
 
-      setShowSnackbar(true);
+      setSnackbarMessage("Booking successful! Redirecting...");
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
       setLoading(true);
 
       setTimeout(() => {
-        setShowSnackbar(false);
+        setSnackbarOpen(false);
         setLoading(false);
         navigate("/scheduled-appointment");
       }, 3000);
@@ -149,8 +135,18 @@ const BookAppointment = () => {
       console.log("Appointment details added successfully.");
     } catch (error) {
       console.error("Error adding appointment details:", error);
-      setFormError("An error occurred. Please try again later.");
+      setSnackbarMessage("An error occurred. Please try again later.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbarOpen(false);
   };
 
   return (
@@ -173,8 +169,8 @@ const BookAppointment = () => {
               Select Specialist Doctor
             </MenuItem>
             {doctorList.map((doctor) => (
-              <MenuItem key={doctor} value={doctor}>
-                {doctor}
+              <MenuItem key={doctor.id} value={`${doctor.name} ${doctor.surname}`}>
+                {`${doctor.name} ${doctor.surname}`}
               </MenuItem>
             ))}
           </TextField>
@@ -193,7 +189,7 @@ const BookAppointment = () => {
             <MenuItem value="" disabled>
               Select Blood Group
             </MenuItem>
-            {bloodGroups.map((group) => (
+            {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((group) => (
               <MenuItem key={group} value={group}>
                 {group}
               </MenuItem>
@@ -217,6 +213,8 @@ const BookAppointment = () => {
             name="contactNumber"
             value={formData.contactNumber}
             onChange={handleChange}
+            pattern="\d{10}" // Pattern for 10 digits
+            title="Please enter a 10-digit phone number."
             required
           />
         </div>
@@ -244,17 +242,31 @@ const BookAppointment = () => {
             }}
             required
           />
-          {formError && <div className="error-message">{formError}</div>}
         </div>
-        <button type="submit" disabled={!isFormValid()}>
-          {loading ? "Submitting..." : "Submit"}
-        </button>
+        <Button
+  type="submit"
+  variant="contained"
+  color="primary"
+  disabled={loading}
+  className="submit-button"
+>
+  {loading ? "Submitting..." : "Submit"}
+</Button>
       </form>
-      {showSnackbar && (
-        <div className="snackbar success">
-          Booking successful! Redirecting...
-        </div>
-      )}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          severity={snackbarSeverity}
+          onClose={handleSnackbarClose}
+        >
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 };

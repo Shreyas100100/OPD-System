@@ -1,30 +1,40 @@
 /* Home.css */
 
 .hospital-theme {
-    background-color: #f8f9fa; /* Light background color */
-    padding: 20px;
-  }
-  
-  .welcome-section {
-    text-align: center;
-    padding: 20px;
-    background-color: #ffffff; /* White background color */
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle lift */
-  }
-  
-  .uid-section {
-    margin-top: 20px;
-    font-weight: bold;
-  }
-  
-  .button-section {
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  .link-section {
-    text-align: center;
-    margin-top: 20px;
-  }
-  
+  background-color: #f8f9fa; /* Light background color */
+  padding: 20px;
+}
+
+.welcome-section {
+  text-align: center;
+  padding: 20px;
+  background-color: #ffffff; /* White background color */
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle lift */
+}
+
+.uid-section {
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.button-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.link-section {
+  text-align: center;
+  margin-top: 20px;
+}
+.gif-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh; /* Adjust the height as needed */
+}
+
+.centered-gif {
+  max-width: 40%;
+  max-height: 40%;
+}

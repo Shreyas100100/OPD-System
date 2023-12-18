@@ -1,82 +1,86 @@
-import React from "react";
-import { Button, Card, Row, Col } from "react-bootstrap";
-import { useUserAuth } from "../../context/UserAuthContext";
-import { getAuth, deleteUser } from "firebase/auth";
-import { doc, deleteDoc } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import Disp from "../Database/Disp";
-import { Link, useNavigate } from "react-router-dom";
-import NvBar from "../../components/Navbar/Navbar";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { Container, Box, Typography, Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import AdminNavbar from "../../components/AdminNavbar/AdminNavbar";
-
-
-const auth = getAuth();
+import { useUserAuth } from "../../context/UserAuthContext";
+import AdminBook from "./AdminBook";
 
 const AdminHome = () => {
-  const { logOut, user } = useUserAuth();
-  const navigate = useNavigate();
+  const { user } = useUserAuth();
+  const [appointmentsCount, setAppointmentsCount] = useState(0);
+  const [doctorsCount, setDoctorsCount] = useState(0);
+  const [patientsCount, setPatientsCount] = useState(0);
+ 
 
-  const handleDelete = async () => {
-    try {
-      // Delete the user account
-      await deleteUser(user);
+  useEffect(() => {
+    const fetchAppointmentsCount = async () => {
+      try {
+        const appointmentsCollection = collection(db, "appointments");
+        const appointmentsSnapshot = await getDocs(appointmentsCollection);
+        setAppointmentsCount(appointmentsSnapshot.size);
 
-      // Remove the user from the 'users' collection in the database
-      const userDocRef = doc(db, "users", user.uid);
-      await deleteDoc(userDocRef);
+        const currentDate = new Date();
+      } catch (error) {
+        console.error("Error fetching appointments count:", error);
+      }
+    };
 
-      // Optionally, you can perform additional actions after successful deletion
-      console.log("User account deleted successfully.");
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    const fetchDoctorsCount = async () => {
+      try {
+        const doctorsCollection = collection(db, "users");
+        const doctorsQuery = query(doctorsCollection, where("role", "==", "Doctor"));
+        const doctorsSnapshot = await getDocs(doctorsQuery);
+        setDoctorsCount(doctorsSnapshot.size);
+      } catch (error) {
+        console.error("Error fetching doctors count:", error);
+      }
+    };
 
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      navigate("/");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+    const fetchPatientsCount = async () => {
+      try {
+        const patientsCollection = collection(db, "users");
+        const patientsQuery = query(patientsCollection, where("role", "==", "Patient"));
+        const patientsSnapshot = await getDocs(patientsQuery);
+        setPatientsCount(patientsSnapshot.size);
+      } catch (error) {
+        console.error("Error fetching patients count:", error);
+      }
+    };
 
-  const handleDbPgRedirect = () => {
-    if (user && user.role === "3") {
-      navigate("/DbPg");
-    } else {
-      console.log("Access denied. User does not have the required role.");
-      // Optionally show a message or perform another action for users without the required role.
-    }
-  };
+    fetchAppointmentsCount();
+    fetchDoctorsCount();
+    fetchPatientsCount();
+  }, []);
 
   return (
-    <div className="profile-container">
-        <AdminNavbar />
-      <Row>
-        <Col md={4}>
-          <Card>
-            <Card.Body>
-              {/* <Disp /> */}
-              <h2>Welcome, {user && user.email}</h2>
-              <p className="uid-section">UID: {user && user.uid}</p>
-              <p>{user && user.role}</p>
-              <div className="button-section">
-                <Button variant="primary" onClick={handleLogout}>
-                  Log out
-                </Button>
-              </div>
-              <div className="button-section">
-                <Button variant="danger" onClick={handleDelete}>
-                  Delete Account
-                </Button>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
+    <Container className="admin-profile-container">
+      <AdminNavbar />
+      <Typography variant="h4" align="center" gutterBottom>
+        WELCOME ADMIN 
+      </Typography>
+      <Box className="admin-profile-boxes" sx={{ display: 'flex', gap: '16px' }}>
+        <Paper elevation={3} className="admin-profile-box" sx={{ flex: 1, p: 2 }}>
+          <Typography variant="h4">{appointmentsCount} Appointments</Typography>
+          </Paper>
+        <Paper elevation={3} className="admin-profile-box" sx={{ flex: 1, p: 2 }}>
+         
+          <Typography variant="h4">{doctorsCount} Doctors</Typography>
+        </Paper>
+        <Paper elevation={3} className="admin-profile-box" sx={{ flex: 1, p: 2 }}>
+          
+          <Typography variant="h4">{patientsCount} Patients</Typography>
+        </Paper>
+      </Box>
 
-      </Row>
-    </div>
+
+      <AdminBook />
+    </Container>
   );
 };
 

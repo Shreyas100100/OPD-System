@@ -98,7 +98,7 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function AdminNavbar() {
+export default function DoctorNavbar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -149,7 +149,7 @@ export default function AdminNavbar() {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              OPD Admin
+              OPD Doctor
             </Typography>
           </Box>
           {/* Account Menu */}
@@ -183,7 +183,7 @@ export default function AdminNavbar() {
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to="/adminHome"
+                to="/doctorHome"
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -205,7 +205,7 @@ export default function AdminNavbar() {
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to="/dbpg"
+                to="/patientdb"
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -225,56 +225,11 @@ export default function AdminNavbar() {
                 />
               </ListItemButton>
             </ListItem>
+            
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to="/DoctorDatabase"
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <LocalHospitalIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                />
-                <ListItemText
-                  primary="Doctors"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                component={Link}
-                to="/AdminDatabase"
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <SupervisorAccountIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                />
-                <ListItemText
-                  primary="Admins"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                component={Link}
-                to="/Appointments"
+                to="/MyAppointments"
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -289,7 +244,7 @@ export default function AdminNavbar() {
                   }}
                 />
                 <ListItemText
-                  primary="Appointments"
+                  primary=" My Appointments"
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
@@ -302,7 +257,7 @@ export default function AdminNavbar() {
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to="/AdminProfile"
+                to="/DoctorProfile"
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
