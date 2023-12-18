@@ -1,0 +1,159 @@
+/* CSS for ImageWithText component */
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .main-heading {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    background-color: #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .score-table th,
+  .score-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .score-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .criteria-row {
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    /* Add padding here to separate criteria */
+  }
+  
+  .criteria-row input[type="radio"] {
+    margin-right: 8px;
+  }
+  
+  .total-score-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .total-score-label {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .total-score-box {
+    width: 80px;
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: center;
+  }
+  
+  .but {
+    text-align: center;
+  }
+  
+  button[type="submit"] {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: darkgreen;
+  }
+  
+  .lbl{
+    font-family: Arial, sans-serif;
+    font-size: small;
+  }
+
+  .score-table td {
+    border: 1px solid #ffffff; /* Add a border style to maintain cell borders */
+    border-left: none; /* Remove left border to eliminate the center line */
+    border-right: none; /* Remove right border to eliminate the center line */
+  }
+
+  .table-box {
+    border: 2px solid #000; /* Add a border to create a box around the table */
+    padding: 10px; /* Add padding to the box for spacing */
+  }
+
+  .cont {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px; /* Adjust the gap between columns and rows */
+  }
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Adjust the gap between checkboxes */
+}
+
+label {
+  display: flex;
+  align-items: center;
+}
+
+.text-box {
+  grid-column: span 3;
+}
+
+textarea {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+.tb1{
+  padding-bottom:10px
+}
+
+.resizeable-textarea {
+  resize: both;
+  overflow: auto;
+  /* Add other styling properties as needed */
+  width: 200px; /* Set an initial width if desired */
+  height: 50px; /* Set an initial height if desired */
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.cont2 {
+  display: flex;
+  gap: 20px; /* Adjust the gap between columns */
+}
+
+.column {
+  flex: 1;
+}
+
+h2 {
+  text-align: center;
+}
+
+.resizeable-textarea2 {
+  width: 96%;
+  height: 50px; /* Set the initial height of the textboxes */
+  resize: both;
+  overflow: auto;
+  border: 1px solid #ccc;
+  padding: 5px;
+}

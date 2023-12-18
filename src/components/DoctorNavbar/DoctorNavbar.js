@@ -7,10 +7,10 @@ import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import StorageIcon from "@mui/icons-material/Storage";
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import ChecklistIcon from "@mui/icons-material/Checklist";
+
 import IconButton from "@mui/material/IconButton";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -23,14 +23,11 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import EventIcon from "@mui/icons-material/Event";
 import Menu from "@mui/material/Menu";
-import MasksIcon from '@mui/icons-material/Masks';
 import MenuItem from "@mui/material/MenuItem";
-import AddToQueueIcon from "@mui/icons-material/AddToQueue";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useUserAuth } from "../../context/UserAuthContext";
 import { Link, useNavigate } from "react-router-dom";
-// import "./AdminNavbar.css"
 
 const drawerWidth = 240;
 
@@ -152,7 +149,6 @@ export default function DoctorNavbar() {
               OPD Doctor
             </Typography>
           </Box>
-          {/* Account Menu */}
           <IconButton color="inherit" onClick={handleMenuOpen}>
             <AccountCircleIcon />
           </IconButton>
@@ -200,8 +196,7 @@ export default function DoctorNavbar() {
                 <ListItemText primary="Home" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
-            
-            
+
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
@@ -225,7 +220,7 @@ export default function DoctorNavbar() {
                 />
               </ListItemButton>
             </ListItem>
-            
+
             <ListItem disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
@@ -245,6 +240,54 @@ export default function DoctorNavbar() {
                 />
                 <ListItemText
                   primary=" My Appointments"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                component={Link}
+                to="/Checklist"
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ChecklistIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                />
+                <ListItemText
+                  primary="Checklist"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                component={Link}
+                to="/AldretScore"
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ChecklistIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                />
+                <ListItemText
+                  primary="AldretScore"
                   sx={{ opacity: open ? 1 : 0 }}
                 />
               </ListItemButton>
@@ -271,7 +314,10 @@ export default function DoctorNavbar() {
                     justifyContent: "center",
                   }}
                 />
-                <ListItemText primary="Profile" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary="Profile"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding sx={{ display: "block" }}>

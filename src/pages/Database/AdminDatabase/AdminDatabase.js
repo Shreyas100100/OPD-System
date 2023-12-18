@@ -44,8 +44,6 @@ const AdminDatabase = () => {
         usersSnapshot.forEach((doc) => {
           usersData.push({ id: doc.id, ...doc.data() });
         });
-
-        // Filter users by role === "Admin"
         const adminUsers = usersData.filter((user) => user.role === "Admin");
 
         setUserData(adminUsers);
@@ -112,9 +110,7 @@ const AdminDatabase = () => {
       });
 
       setUserData((prevUserData) =>
-        prevUserData.map((user) =>
-          user.id === editUser.id ? editUser : user
-        )
+        prevUserData.map((user) => (user.id === editUser.id ? editUser : user))
       );
 
       setOpenEditDialog(false);
@@ -133,18 +129,19 @@ const AdminDatabase = () => {
         <CircularProgress />
       ) : (
         <TableContainer component={Paper} className="styled-table">
-          <h2><TableHead >Admin Database</TableHead></h2>
+          <h2>
+            <TableHead>Admin Database</TableHead>
+          </h2>
           <Table>
-            
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Surname</TableCell>
-                <TableCell>DOB</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Role</TableCell>
-                <TableCell>Edit</TableCell>
-                <TableCell>Delete</TableCell>
-              </TableRow>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Surname</TableCell>
+              <TableCell>DOB</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Role</TableCell>
+              <TableCell>Edit</TableCell>
+              <TableCell>Delete</TableCell>
+            </TableRow>
             {/* </TableHead> */}
             <TableBody>
               {userData.map((user) => (
@@ -241,8 +238,6 @@ const AdminDatabase = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Delete Confirmation Dialog */}
       <Dialog
         open={!!deleteConfirmation}
         onClose={() => setDeleteConfirmation(null)}
@@ -251,9 +246,8 @@ const AdminDatabase = () => {
         <DialogContent>
           <p>
             Are you sure you want to delete{" "}
-            {`${deleteConfirmation?.name} ${
-              deleteConfirmation?.surname
-            } (${deleteConfirmation?.role})`}?
+            {`${deleteConfirmation?.name} ${deleteConfirmation?.surname} (${deleteConfirmation?.role})`}
+            ?
           </p>
         </DialogContent>
         <DialogActions>

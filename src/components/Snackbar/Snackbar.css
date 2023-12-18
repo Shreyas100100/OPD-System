@@ -1,0 +1,24 @@
+.snackbar {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  left: 480px; 
+  padding: 15px;
+  color: white;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.snackbar.success {
+  background-color: #4caf50;
+}
+
+.snackbar.error {
+  background-color: #f44336;
+}
+
+.snackbar.visible {
+  display: block;
+  opacity: 1;
+}

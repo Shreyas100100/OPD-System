@@ -1,5 +1,3 @@
-// App.js
-
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
@@ -19,6 +17,8 @@ import DoctorHome from "./pages/DoctorHome/DoctorHome";
 import PatientDb from "./pages/Database/PatientDatabase/PatientDb";
 import MyAppointments from "./pages/MyAppointments/MyAppointments";
 import DoctorProfile from "./pages/Profile/DoctorProfile";
+import AS from "./CheckList/AS";
+import IOA from "./CheckList/IntraOperativeAnasthesia/IntraOperativeAnasthesia";
 function App() {
   return (
     <div>
@@ -50,6 +50,10 @@ function App() {
           <Route path="/PatientDb" element={<PatientDb />} />
           <Route path="/MyAppointments" element={<MyAppointments />} />
           <Route path="/DoctorProfile" element={<DoctorProfile />} />
+          <Route path="/AldretScore" element={<AS />} />
+          <Route path="/Checklist" element={<IOA />} />
+
+
 
         </Routes>
       </UserAuthContextProvider>

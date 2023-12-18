@@ -45,7 +45,7 @@ const Appointments = () => {
   const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); // Adjust the number of items per page
+  const [itemsPerPage] = useState(5); 
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -135,7 +135,6 @@ const Appointments = () => {
         bloodGroup: selectedBloodGroup || editAppointment.bloodGroup,
         patientName: editAppointment.patientName,
         appointmentDateTime: editAppointment.appointmentDateTime,
-        // Add other fields as needed
       });
 
       setAppointments((prevAppointments) =>
@@ -213,7 +212,7 @@ const Appointments = () => {
   };
 
   const handleShowDeleteDialog = (appointment) => {
-    setEditAppointment(appointment); // Set the appointment to be deleted
+    setEditAppointment(appointment); 
     setIsDeleteDialogOpen(true);
   };
 

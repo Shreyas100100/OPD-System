@@ -1,12 +1,10 @@
-// Login.js
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Alert } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
-import "./login.css"; // Import the CSS file
+import "./login.css"; 
 
 const auth = getAuth();
 const firestore = getFirestore();
@@ -21,10 +19,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
     try {
-      // Perform authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-      // Get the user's role from Firestore
       const userSnapshot = await getDocs(
         query(collection(firestore, "users"), where("email", "==", userCredential.user.email))
       );

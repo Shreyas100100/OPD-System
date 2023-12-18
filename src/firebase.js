@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD8f_kaSktCBjJ9yGfo6NQ3vyUlAWwuUmo",
-  authDomain: "opd-sys.firebaseapp.com",
-  projectId: "opd-sys",
-  storageBucket: "opd-sys.appspot.com",
-  messagingSenderId: "322384430345",
-  appId: "1:322384430345:web:8db41493e6a68d1f1cbfd8"
+  apiKey: "AIzaSyD9y7J4pPoFiThVm4ANU28IljeNrFiFKUA",
+  authDomain: "opd-system-cd627.firebaseapp.com",
+  projectId: "opd-system-cd627",
+  storageBucket: "opd-system-cd627.appspot.com",
+  messagingSenderId: "1076078044312",
+  appId: "1:1076078044312:web:4bdcfbf476d0ce621f9ced"
 };
 
 const app = initializeApp(firebaseConfig);

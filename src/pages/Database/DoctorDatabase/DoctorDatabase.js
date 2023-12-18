@@ -44,8 +44,6 @@ const DoctorDatabase = () => {
         usersSnapshot.forEach((doc) => {
           usersData.push({ id: doc.id, ...doc.data() });
         });
-
-        // Filter users by role === "Admin"
         const adminUsers = usersData.filter((user) => user.role === "Doctor");
 
         setUserData(adminUsers);
@@ -150,9 +148,7 @@ const DoctorDatabase = () => {
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.surname}</TableCell>
-                  {/* <TableCell>{formatDate(user.dob)}</TableCell> */}
                   <TableCell>{user.email}</TableCell>
-                  {/* <TableCell>{user.role}</TableCell> */}
                   <TableCell>
                     <Button
                       variant="contained"

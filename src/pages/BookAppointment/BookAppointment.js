@@ -1,14 +1,6 @@
-// BookAppointment.js
-
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import {
-  collection,
-  addDoc,
-  getDoc,
-  doc,
-  getDocs,
-} from "firebase/firestore";
+import { collection, addDoc, getDoc, doc, getDocs } from "firebase/firestore";
 import "./BookAppointment.css";
 import NvBar from "../../components/Navbar/Navbar";
 import { getAuth } from "firebase/auth";
@@ -101,14 +93,38 @@ const BookAppointment = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    if (name === "appointmentDateTime") {
+      const selectedDateTime = new Date(value);
+      const currentDateTime = new Date();
+
+      if (selectedDateTime < currentDateTime) {
+        setSnackbarMessage("Please select a future date and time.");
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      } else {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+        setSnackbarOpen(false); 
+      }
+    } else {
+      if (!value.trim()) {
+        setSnackbarMessage(`Please enter a value for ${name}.`);
+        setSnackbarSeverity("error");
+        setSnackbarOpen(true);
+      } else {
+        setFormData({
+          ...formData,
+          [name]: value,
+        });
+        setSnackbarOpen(false); 
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
 
     try {
       const appointmentsCollection = collection(db, "appointments");
@@ -169,7 +185,10 @@ const BookAppointment = () => {
               Select Specialist Doctor
             </MenuItem>
             {doctorList.map((doctor) => (
-              <MenuItem key={doctor.id} value={doctor.name}>
+              <MenuItem
+                key={doctor.id}
+                value={`${doctor.name} ${doctor.surname}`}
+              >
                 {`${doctor.name} ${doctor.surname}`}
               </MenuItem>
             ))}
@@ -213,8 +232,6 @@ const BookAppointment = () => {
             name="contactNumber"
             value={formData.contactNumber}
             onChange={handleChange}
-            pattern="\d{10}" // Pattern for 10 digits
-            title="Please enter a 10-digit phone number."
             required
           />
         </div>
@@ -244,14 +261,14 @@ const BookAppointment = () => {
           />
         </div>
         <Button
-  type="submit"
-  variant="contained"
-  color="primary"
-  disabled={loading}
-  className="submit-button"
->
-  {loading ? "Submitting..." : "Submit"}
-</Button>
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={loading}
+          className="submit-button"
+        >
+          {loading ? "Submitting..." : "Submit"}
+        </Button>
       </form>
       <Snackbar
         open={snackbarOpen}

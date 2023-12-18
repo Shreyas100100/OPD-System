@@ -6,6 +6,7 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import Snackbar from "../../components/Snackbar/Snackbar";
 import "./Signup.css";
 
 function SU(email, password, name, surname, birthDate, role, doctorInfo) {
@@ -49,8 +50,27 @@ const Signup = () => {
     experience: "",
   });
 
+  const [isSnackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("error");
+
   const { signUp } = useUserAuth();
   let navigate = useNavigate();
+
+  const isPasswordValid = (password) => {
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const showSnackbar = (message, type) => {
+    setSnackbarMessage(message);
+    setSnackbarType(type);
+    setSnackbarVisible(true);
+    setTimeout(() => {
+      setSnackbarVisible(false);
+    }, 3000);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,14 +80,25 @@ const Signup = () => {
       const confirmPassword = document.getElementById(
         "formBasicConfPassword"
       ).value;
-      if (password !== confirmPassword) throw new Error("Passwords do not match");
 
-      // Update the SU function to handle doctor information
+      if (password !== confirmPassword) {
+        throw new Error("Passwords do not match");
+      }
+
+      if (!isPasswordValid(password)) {
+        showSnackbar(
+          "Password must be at least 8 characters long and contain at least 1 special character, 1 uppercase letter, and 1 lowercase letter.",
+          "error"
+        );
+        return;
+      }
       await SU(email, password, name, surname, birthDate, role, doctorInfo);
 
+      showSnackbar("Signup successful!", "success");
       navigate("/");
     } catch (err) {
       setError(err.message);
+      showSnackbar(err.message, "error");
     }
   };
 
@@ -183,6 +214,12 @@ const Signup = () => {
             </Button>
           </div>
         </Form>
+
+        <Snackbar
+          message={snackbarMessage}
+          isVisible={isSnackbarVisible}
+          type={snackbarType}
+        />
 
         <div className="text-center">
           Already have an account? <Link to="/">Log In</Link>

@@ -7,7 +7,6 @@ import {
   updateDoc,
   deleteDoc,
 } from "firebase/firestore";
-import NvBar from "../../components/Navbar/Navbar";
 import {
   Table,
   TableBody,
@@ -23,6 +22,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  MenuItem,
 } from "@mui/material";
 import "./db.css";
 import AdminNavbar from "../../components/AdminNavbar/AdminNavbar";
@@ -33,6 +33,8 @@ const DbPg = () => {
   const [editUser, setEditUser] = useState(null);
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState(null);
+  const [roles] = useState(["Admin", "Doctor", "TempAdmin", "Patient"]);
+  const [selectedRole, setSelectedRole] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -67,7 +69,9 @@ const DbPg = () => {
     setEditUser({
       ...user,
       dob: formatDate(user.dob),
+      role: user.role || "",
     });
+    setSelectedRole(user.role || "");
     setOpenEditDialog(true);
   };
 
@@ -105,14 +109,12 @@ const DbPg = () => {
         name: editUser.name,
         surname: editUser.surname,
         dob: editUser.dob,
-        // email is not updated in this case
-        role: editUser.role,
-        // Add other fields as needed
+        role: selectedRole,
       });
 
       setUserData((prevUserData) =>
         prevUserData.map((user) =>
-          user.id === editUser.id ? editUser : user
+          user.id === editUser.id ? { ...editUser, role: selectedRole } : user
         )
       );
 
@@ -222,16 +224,18 @@ const DbPg = () => {
           />
           <TextField
             label="Role"
+            select
             fullWidth
             style={{ marginTop: "12px" }}
-            value={editUser?.role || ""}
-            onChange={(e) =>
-              setEditUser({
-                ...editUser,
-                role: e.target.value,
-              })
-            }
-          />
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
+          >
+            {roles.map((role) => (
+              <MenuItem key={role} value={role}>
+                {role}
+              </MenuItem>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleEditClose}>Cancel</Button>

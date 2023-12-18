@@ -1,14 +1,6 @@
-// AdminBook.jsx
-
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  addDoc,
-} from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import {
   Container,
   Box,
@@ -20,7 +12,7 @@ import {
 } from "@mui/material";
 import AdminNavbar from "../../components/AdminNavbar/AdminNavbar";
 import { useUserAuth } from "../../context/UserAuthContext";
-import "./AdminBook.css"; // Import the CSS file
+import "./AdminBook.css";
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
@@ -31,7 +23,8 @@ const AdminBook = () => {
   const [patientsCount, setPatientsCount] = useState(0);
   const [liveAppointmentsCount, setLiveAppointmentsCount] = useState(0);
   const [previousAppointmentsCount, setPreviousAppointmentsCount] = useState(0);
-  const [openAddAppointmentDialog, setOpenAddAppointmentDialog] = useState(false);
+  const [openAddAppointmentDialog, setOpenAddAppointmentDialog] =
+    useState(false);
   const [newAppointment, setNewAppointment] = useState({
     uid: "",
     patientName: "",
@@ -39,7 +32,7 @@ const AdminBook = () => {
     specialistDoctor: "",
     bloodGroup: "",
     contactNumber: "",
-    appointmentDateTime: "2023-12-22", // Sample default value
+    appointmentDateTime: "2023-12-22",
   });
 
   const [patientsList, setPatientsList] = useState([]);
@@ -71,7 +64,10 @@ const AdminBook = () => {
     const fetchDoctorsList = async () => {
       try {
         const doctorsCollection = collection(db, "users");
-        const doctorsQuery = query(doctorsCollection, where("role", "==", "Doctor"));
+        const doctorsQuery = query(
+          doctorsCollection,
+          where("role", "==", "Doctor")
+        );
         const doctorsSnapshot = await getDocs(doctorsQuery);
 
         const doctorsData = doctorsSnapshot.docs.map((doc) => ({
@@ -89,7 +85,10 @@ const AdminBook = () => {
     const fetchPatientsCount = async () => {
       try {
         const patientsCollection = collection(db, "users");
-        const patientsQuery = query(patientsCollection, where("role", "==", "Patient"));
+        const patientsQuery = query(
+          patientsCollection,
+          where("role", "==", "Patient")
+        );
         const patientsSnapshot = await getDocs(patientsQuery);
         setPatientsCount(patientsSnapshot.size);
 
@@ -110,10 +109,6 @@ const AdminBook = () => {
     fetchPatientsCount();
   }, []);
 
-  const handleOpenAddAppointmentDialog = () => {
-    setOpenAddAppointmentDialog(true);
-  };
-
   const handleCloseAddAppointmentDialog = () => {
     setOpenAddAppointmentDialog(false);
   };
@@ -125,7 +120,7 @@ const AdminBook = () => {
         uid: patient.uid,
         patientName: patient.name,
         email: patient.email,
-        specialistDoctor: "", // Reset specialistDoctor when selecting a new patient
+        specialistDoctor: "",
       });
     } else {
       setNewAppointment({
@@ -170,34 +165,51 @@ const AdminBook = () => {
   return (
     <Container className="admin-profile-container">
       <AdminNavbar />
-      <Typography variant="h4" align="center" gutterBottom>
-        Admin Book
-      </Typography>
-      <Box className="admin-profile-boxes" sx={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-        <Paper elevation={3} className="admin-profile-box" sx={{ flex: '1 1 300px', p: 2 }}>
+      <Typography variant="h4" align="center" gutterBottom></Typography>
+      <Box
+        className="admin-profile-boxes"
+        sx={{ display: "flex", gap: "16px", flexWrap: "wrap" }}
+      >
+        <Paper
+          elevation={3}
+          className="admin-profile-box"
+          sx={{ flex: "1 1 300px", p: 2 }}
+        >
           <Typography variant="h6" gutterBottom>
-            Appointments Count
+            ANALYTICS
           </Typography>
-          <Typography variant="h4">{appointmentsCount}</Typography>
-          <Typography variant="subtitle2">Live Appointments: {liveAppointmentsCount}</Typography>
-          <Typography variant="subtitle2">Previous Appointments: {previousAppointmentsCount}</Typography>
-          <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={handleOpenAddAppointmentDialog}>
-            Add Appointment
-          </Button>
         </Paper>
-        <Paper elevation={3} className="admin-profile-box" sx={{ flex: '1 1 300px', p: 2 }}>
-          {/* Additional boxes or content can be added here */}
+        <Paper
+          elevation={3}
+          className="admin-profile-box"
+          sx={{ flex: "1 1 300px", p: 2 }}
+        >
+          <Typography variant="h6" gutterBottom>
+            ANNOUNCEMENTS
+          </Typography>
         </Paper>
       </Box>
-      <Box className="admin-profile-boxes" sx={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-        <Paper elevation={3} className="admin-profile-box" sx={{ flex: '1 1 600px', p: 2 }}>
+      <Box
+        className="admin-profile-boxes"
+        sx={{ display: "flex", gap: "16px", flexWrap: "wrap" }}
+      >
+        <Paper
+          elevation={3}
+          className="admin-profile-box"
+          sx={{ flex: "1 1 600px", p: 2 }}
+        >
           <Typography variant="h6" gutterBottom>
             Add Appointment
           </Typography>
-          <Box className="admin-form" sx={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <Box
+            className="admin-form"
+            sx={{ display: "flex", flexDirection: "column", gap: "16px" }}
+          >
             <Autocomplete
               options={patientsList}
-              getOptionLabel={(option) => `${option.name} ${option.surname} (${option.email})`}
+              getOptionLabel={(option) =>
+                `${option.name} ${option.surname} (${option.email})`
+              }
               onChange={handleSelectPatient}
               renderInput={(params) => (
                 <TextField
@@ -226,7 +238,9 @@ const AdminBook = () => {
             <Autocomplete
               options={bloodGroups}
               getOptionLabel={(option) => option}
-              onChange={(event, value) => setNewAppointment({ ...newAppointment, bloodGroup: value })}
+              onChange={(event, value) =>
+                setNewAppointment({ ...newAppointment, bloodGroup: value })
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -242,19 +256,29 @@ const AdminBook = () => {
               variant="outlined"
               fullWidth
               value={newAppointment.contactNumber}
-              onChange={(e) => setNewAppointment({ ...newAppointment, contactNumber: e.target.value })}
+              onChange={(e) =>
+                setNewAppointment({
+                  ...newAppointment,
+                  contactNumber: e.target.value,
+                })
+              }
               className="admin-textfield"
             />
             <TextField
-              label="Appointment Date and Time"
-              type="datetime-local"
+              label="Appointment Date"
+              type="date"
               variant="outlined"
               fullWidth
               InputLabelProps={{
                 shrink: true,
               }}
               value={newAppointment.appointmentDateTime}
-              onChange={(e) => setNewAppointment({ ...newAppointment, appointmentDateTime: e.target.value })}
+              onChange={(e) =>
+                setNewAppointment({
+                  ...newAppointment,
+                  appointmentDateTime: e.target.value,
+                })
+              }
               className="admin-textfield"
             />
             <Button

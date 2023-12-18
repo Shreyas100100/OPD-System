@@ -4,7 +4,7 @@ import { useUserAuth } from "../../context/UserAuthContext";
 import { getAuth, deleteUser } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AdminNavbar from "../../components/AdminNavbar/AdminNavbar";
 
 const auth = getAuth();
@@ -15,14 +15,11 @@ const AdminProfile = () => {
 
   const handleDelete = async () => {
     try {
-      // Delete the user account
       await deleteUser(user);
 
-      // Remove the user from the 'users' collection in the database
       const userDocRef = doc(db, "users", user.uid);
       await deleteDoc(userDocRef);
 
-      // Optionally, you can perform additional actions after successful deletion
       console.log("User account deleted successfully.");
     } catch (err) {
       console.log(err);
@@ -43,7 +40,6 @@ const AdminProfile = () => {
       navigate("/DbPg");
     } else {
       console.log("Access denied. User does not have the required role.");
-      // Optionally show a message or perform another action for users without the required role.
     }
   };
 

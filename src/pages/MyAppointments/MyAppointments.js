@@ -45,6 +45,7 @@ const MyAppointments = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
+  const [filteredDoctor, setFilteredDoctor] = useState("");
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -84,6 +85,13 @@ const MyAppointments = () => {
         });
 
         setDoctors(doctorsData);
+        const currentUserDoctor = doctorsData.find(
+          (doctor) => doctor.name + " " + doctor.surname === user.name
+        );
+
+        if (currentUserDoctor) {
+          setFilteredDoctor(user.name);
+        }
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
@@ -91,11 +99,19 @@ const MyAppointments = () => {
 
     fetchAppointments();
     fetchDoctors();
-  }, [sortColumn, sortOrder]);
+  }, [sortColumn, sortOrder, user.name]);
+
+  const handleDoctorFilterChange = (e) => {
+    setFilteredDoctor(e.target.value);
+  };
 
   const filteredAppointments = appointments
     .filter((appointment) =>
       appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter(
+      (appointment) =>
+        filteredDoctor === "" || appointment.specialistDoctor === filteredDoctor
     );
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -134,7 +150,6 @@ const MyAppointments = () => {
         bloodGroup: selectedBloodGroup || editAppointment.bloodGroup,
         patientName: editAppointment.patientName,
         appointmentDateTime: editAppointment.appointmentDateTime,
-        // Add other fields as needed
       });
 
       setAppointments((prevAppointments) =>
@@ -197,22 +212,10 @@ const MyAppointments = () => {
     return null;
   };
 
-  const handleCancelEdit = () => {
-    setOpenEditDialog(false);
-    setEditAppointment(null);
-    setSelectedBloodGroup("");
-    setSelectedDoctor("");
-  };
-
-  const handleLeaveEdit = () => {
-    setOpenEditDialog(false);
-    setEditAppointment(null);
-    setSelectedBloodGroup("");
-    setSelectedDoctor("");
-  };
+  
 
   const handleShowDeleteDialog = (appointment) => {
-    setEditAppointment(appointment); // Set the appointment to be deleted
+    setEditAppointment(appointment); 
     setIsDeleteDialogOpen(true);
   };
 
@@ -225,12 +228,13 @@ const MyAppointments = () => {
     setSortOrder("asc");
     setSearchTerm("");
     setCurrentPage(1);
+    setFilteredDoctor("");
   };
 
   return (
     <div className="appointments-container">
       <DoctorNavbar />
-      <h1>Welcome {doctors.name}</h1>
+      
       <div className="appointments-content">
         <h2>My Appointments</h2>
         <TextField
@@ -240,6 +244,24 @@ const MyAppointments = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <TextField
+          label="Filter by Doctor"
+          select
+          fullWidth
+          margin="normal"
+          value={filteredDoctor}
+          onChange={handleDoctorFilterChange}
+        >
+          <MenuItem value="">All Doctors </MenuItem>
+          {doctors.map((doctor) => (
+            <MenuItem
+              key={doctor.id}
+              value={doctor.name + " " + doctor.surname}
+            >
+              {doctor.name + " " + doctor.surname}
+            </MenuItem>
+          ))}
+        </TextField>
 
         {loading ? (
           <CircularProgress />

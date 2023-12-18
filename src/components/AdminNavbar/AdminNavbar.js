@@ -23,14 +23,12 @@ import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import EventIcon from "@mui/icons-material/Event";
 import Menu from "@mui/material/Menu";
-import MasksIcon from '@mui/icons-material/Masks';
 import MenuItem from "@mui/material/MenuItem";
-import AddToQueueIcon from "@mui/icons-material/AddToQueue";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useUserAuth } from "../../context/UserAuthContext";
 import { Link, useNavigate } from "react-router-dom";
-// import "./AdminNavbar.css"
+
 
 const drawerWidth = 240;
 
@@ -123,6 +121,11 @@ export default function AdminNavbar() {
   };
 
   const handleMenuOpen = (event) => {
+    try {
+        navigate("/AdminProfile");
+    } catch (error) {
+      console.log(error.message);
+    }
     setAnchorEl(event.currentTarget);
   };
 

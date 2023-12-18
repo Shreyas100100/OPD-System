@@ -1,4 +1,3 @@
-// Import necessary libraries
 import React, { useEffect, useState } from "react";
 import { Button, Card, Row, Col } from "react-bootstrap";
 import { useUserAuth } from "../../context/UserAuthContext";
@@ -6,10 +5,9 @@ import { getAuth, deleteUser } from "firebase/auth";
 import { doc, getDoc, deleteDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import NvBar from "../../components/Navbar/Navbar";
-import "./PatientProfile.css"; // Import your CSS file for customization
+import "./PatientProfile.css"; 
 import { Link, useNavigate } from "react-router-dom";
 
-// Function to calculate age based on date of birth
 const calculateAge = (dob) => {
   const today = new Date();
   const birthDate = new Date(dob);
@@ -31,7 +29,6 @@ const PatientProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch patient data
     const fetchPatientData = async () => {
       try {
         const userDocRef = doc(db, "users", user.uid);
@@ -47,8 +44,6 @@ const PatientProfile = () => {
         console.log(err);
       }
     };
-
-    // Fetch previous appointments
     const fetchPreviousAppointments = async () => {
       try {
         const appointmentsCollectionRef = collection(db, "appointments");
@@ -68,25 +63,18 @@ const PatientProfile = () => {
 
     fetchPatientData();
     fetchPreviousAppointments();
-
-    // Update the age every second
     const ageInterval = setInterval(() => {
       setCurrentAge(calculateAge(patientData?.dateOfBirth));
-    }, 1000); // Update every second
+    }, 1000); 
 
-    return () => clearInterval(ageInterval); // Clear interval on component unmount
+    return () => clearInterval(ageInterval); 
   }, [user, patientData]);
 
   const handleDelete = async () => {
     try {
-      // Delete the patient account
       await deleteUser(user);
-
-      // Remove the patient from the 'patients' collection in the database
       const patientDocRef = doc(db, "patients", user.uid);
       await deleteDoc(patientDocRef);
-
-      // Optionally, you can perform additional actions after successful deletion
       console.log("Patient account deleted successfully.");
     } catch (err) {
       console.log(err);
@@ -127,19 +115,16 @@ const PatientProfile = () => {
     <div className="profile-container">
       <NvBar />
       <Row>
-        {/* Left Column */}
         <Col md={4}>
           <Card>
             <Card.Body>
               <h2>Welcome {patientData && patientData.name} !</h2>
               {patientData && (
                 <>
-                  {/* <p className="uid-section">UID: {user && user.uid}</p> */}
                   <p>First Name: {patientData.name}</p>
                   <p>Last Name: {patientData.surname}</p>
                   <p>Date of Birth: {patientData.dob}</p>
                   <p>Current Age: {currentAge}</p>
-                  {/* Add more patient details here */}
                 </>
               )}
               <div className="button-section">
@@ -155,8 +140,6 @@ const PatientProfile = () => {
             </Card.Body>
           </Card>
         </Col>
-
-        {/* Right Column */}
         <Col md={8}>
           <Card>
             <Card.Body>
@@ -182,7 +165,6 @@ const PatientProfile = () => {
                             : "days"}
                         </p>
                       )}
-                      {/* Add more appointment details here */}
                     </li>
                   ))}
                 </ul>

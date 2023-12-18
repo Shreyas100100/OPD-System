@@ -6,7 +6,6 @@ import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import StorageIcon from "@mui/icons-material/Storage";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -16,10 +15,10 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
 import EventIcon from "@mui/icons-material/Event";
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import AddToQueueIcon from "@mui/icons-material/AddToQueue";
@@ -27,7 +26,6 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useUserAuth } from "../../context/UserAuthContext";
 import { Link, useNavigate } from "react-router-dom";
-// import PatientProfile from "../../pages/Profile/PatientProfile";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -265,7 +263,10 @@ export default function NvBar() {
                     justifyContent: "center",
                   }}
                 />
-                <ListItemText primary="Profile" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary="Profile"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding sx={{ display: "block" }}>

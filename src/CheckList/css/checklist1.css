@@ -1,0 +1,90 @@
+/* CSS for ImageWithText component */
+
+.container {
+  width: 80%;
+  height: 50px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  padding-top: 2%;
+}
+
+.main-heading {
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 30px;
+  background-color: #ccc;
+  padding: 1px;
+  text-align: center;
+  height: 80px;
+}
+
+.score-table {
+  width: 100%;
+  height: 490px;
+  border-collapse: collapse;
+}
+
+.score-table th,
+.score-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.score-table th {
+  background-color: #f2f2f2;
+}
+
+.criteria-row {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  /* Add padding here to separate criteria */
+}
+
+.criteria-row input[type="radio"] {
+  margin-right: 8px;
+}
+
+.total-score-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.total-score-label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.total-score-box {
+  width: 80px;
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+.but {
+  text-align: center;
+}
+
+button[type="submit"] {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  margin-left: 160px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 30px;
+}
+
+button[type="submit"]:hover {
+  background-color: darkgreen;
+}
+
+.lbl{
+  font-family: Arial, sans-serif;
+  font-size: small;
+}
+

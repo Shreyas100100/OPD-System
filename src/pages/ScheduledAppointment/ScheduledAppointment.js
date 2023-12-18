@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  MenuItem, // Import MenuItem
+  MenuItem, 
 } from "@mui/material";
 import "./ScheduledAppointment.css";
 
@@ -102,10 +102,7 @@ const ScheduledAppointments = () => {
         bloodGroup: editAppointment.bloodGroup,
         patientName: editAppointment.patientName,
         appointmentDateTime: editAppointment.appointmentDateTime,
-        // Add other fields as needed
       });
-
-      // Update the local state
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
           appointment.id === editAppointment.id ? editAppointment : appointment
@@ -191,8 +188,6 @@ const ScheduledAppointments = () => {
             </Table>
           </TableContainer>
         )}
-
-        {/* Edit Dialog */}
         <Dialog open={openEditDialog} onClose={handleEditClose}>
           <DialogTitle>Edit Appointment</DialogTitle>
           <DialogContent>
@@ -265,7 +260,6 @@ const ScheduledAppointments = () => {
                 })
               }
             />
-            {/* Add other fields as needed */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleEditClose}>Cancel</Button>

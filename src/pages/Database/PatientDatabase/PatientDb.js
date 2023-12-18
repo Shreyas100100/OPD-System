@@ -104,9 +104,7 @@ const PatientDb = () => {
         name: editUser.name,
         surname: editUser.surname,
         dob: editUser.dob,
-        // email is not updated in this case
         role: editUser.role,
-        // Add other fields as needed
       });
 
       setUserData((prevUserData) =>
@@ -145,7 +143,7 @@ const PatientDb = () => {
             </TableHead>
             <TableBody>
               {userData
-                .filter((user) => user.role === 'Patient') // Filter users by role
+                .filter((user) => user.role === 'Patient')
                 .map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name}</TableCell>

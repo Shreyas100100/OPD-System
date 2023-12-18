@@ -20,7 +20,11 @@ const ProtectedRoute = ({ children }) => {
   }
   if (user.role==="Patient")
   {
-    return <Navigate to="/Home" />
+    return <Navigate to="/PatientHome" />
+  }
+  if (user.role==="Doctor")
+  {
+    return <Navigate to="/DoctorHome" />
   }
   
   return children;
