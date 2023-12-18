@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# End to End OPD Consultation System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Final Year Project (BTech)
 
-## Available Scripts
+### Objectives
+The End to End OPD Consultation System is a comprehensive solution designed to achieve the following objectives:
 
-In the project directory, you can run:
+1. **Improve Patient Care:**
+   - Streamline workflows for healthcare professionals.
+   - Automate routine tasks to enhance efficiency.
+   - Enable real-time access to patient data.
 
-### `npm start`
+2. **Reduce Costs:**
+   - Automate administrative tasks to cut down on manual efforts.
+   - Improve overall efficiency to reduce resource waste.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+3. **Improve Communication:**
+   - Facilitate seamless communication between patients, clinicians, and staff.
+   - Enhance collaboration for better patient outcomes.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+4. **Support Decision-Making:**
+   - Provide administrators with real-time data and analytics to inform decision-making.
+   - Enhance strategic planning and resource allocation.
 
-### `npm test`
+5. **Achieve Specific Goals:**
+   - Improve patient satisfaction.
+   - Reduce errors in healthcare processes.
+   - Increase compliance with medical standards.
+   - Expand access to healthcare services.
+   - Support research and innovation in the healthcare domain.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Live Demo
+Explore our system through the live demo: [OPD Consultation System Demo](https://opd-system.vercel.app/)
 
-### `npm run build`
+### How to Use
+1. Visit the [live demo](https://opd-system.vercel.app/).
+2. Register for an account or log in if you already have one.
+3. Navigate through the intuitive interface to explore various features.
+4. Experience the streamlined workflows designed to enhance the OPD consultation process.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Technologies Used
+- Frontend: [React](https://reactjs.org/), [Next.js](https://nextjs.org/)
+- Backend: [Node.js](https://nodejs.org/), [Express.js](https://expressjs.com/)
+- Database: [Firebase](https://firebase.google.com/)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Group Members
+1. Shreyas Shripad Kulkarni
+2. Prathmesh Vasudev Yaramwar
+3. Atharva Mukund Kulkarni
+4. Atharva Jaydeep Warokar
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
