@@ -49,4 +49,7 @@ Explore our system through the live demo: [OPD Consultation System Demo](https:/
 3. Atharva Mukund Kulkarni
 4. Atharva Jaydeep Warokar
 
+- Project Guide : Dr. Pravin Futane (VIIT)
+- Industry Guide : Mr. Avinash Jadhav (MindLabz Technologies)
+
 
